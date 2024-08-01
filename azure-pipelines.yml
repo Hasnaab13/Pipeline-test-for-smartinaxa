@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install pandas scikit-learn transformers nltk openpyxl torch requests
+  displayName: 'Install dependencies'
+
+- script: |
+    python PR-P.py
+  displayName: 'Run KPI Script'
+
+- script: |
+    python send_to_telegram.py
+  displayName: 'Send Excel to Telegram'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'qa_inaxa_groundtruth_version08-05-2024_1.xlsx'
+    artifactName: 'kpi-results'
+    publishLocation: 'pipeline'
+  displayName: 'Publish Excel Artifact'
