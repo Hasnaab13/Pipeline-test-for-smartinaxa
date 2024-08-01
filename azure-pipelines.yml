@@ -20,41 +20,8 @@ steps:
   displayName: 'Run KPI Script'
 
 - script: |
-    DOCUMENT_PATH="qa_inaxa_groundtruth_version08-05-2024_1.xlsx"
-    if [ -f "$DOCUMENT_PATH" ]; then
-      echo "File $DOCUMENT_PATH exists."
-      # Get the last modification time of the file
-      LAST_MODIFIED=$(stat -c %y $DOCUMENT_PATH)
-      echo "File last modified: $LAST_MODIFIED"
-    else
-      echo "File $DOCUMENT_PATH does not exist."
-      exit 1
-    fi
-  displayName: 'Verify Updated Excel File'
-
-- script: |
-    DOCUMENT_PATH="qa_inaxa_groundtruth_version08-05-2024_1.xlsx"
-    # Optional: Check for specific content or structure in the file
-    # For example, you can use pandas to check if a particular cell or value is updated
-    python -c "
-import pandas as pd
-df = pd.read_excel('$DOCUMENT_PATH', sheet_name='PR-P_ERPI')
-if df.empty:
-    print('Sheet PR-P_ERPI is empty or not found.')
-    exit(1)
-else:
-    print('Sheet PR-P_ERPI is not empty.')
-    print(df.head())
-"
-  displayName: 'Check Excel File Content'
-
-- script: |
-    BOT_TOKEN="7427451676:AAHRuoRuj8Wgr_zUUqFIsVmHvuXPmUbzNPM"
-    CHAT_ID="5370229480"
-    DOCUMENT_PATH="qa_inaxa_groundtruth_version08-05-2024_1.xlsx"
-    RESPONSE=$(curl -F chat_id=$CHAT_ID -F document=@"$DOCUMENT_PATH" https://api.telegram.org/bot$BOT_TOKEN/sendDocument)
-    echo "Telegram response: $RESPONSE"
-  displayName: 'Send Excel to Telegram'
+    python check_and_send.py
+  displayName: 'Check File Update and Send to Telegram'
 
 - task: PublishPipelineArtifact@1
   inputs:
