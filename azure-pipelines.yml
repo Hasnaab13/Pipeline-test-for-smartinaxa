@@ -4,6 +4,10 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  BOT_TOKEN: '7427451676:AAHRuoRuj8Wgr_zUUqFIsVmHvuXPmUbzNPM'
+  CHAT_ID: '5370229480'
+
 steps:
 - task: UsePythonVersion@0
   inputs:
@@ -12,19 +16,12 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip
-    pip install pandas scikit-learn transformers nltk openpyxl torch requests
+    pip install pandas scikit-learn transformers nltk openpyxl torch
   displayName: 'Install dependencies'
 
 - script: |
     python PR-P.py
   displayName: 'Run KPI Script'
-
-- script: |
-    BOT_TOKEN="7427451676:AAHRuoRuj8Wgr_zUUqFIsVmHvuXPmUbzNPM"
-    CHAT_ID="5370229480"
-    DOCUMENT_PATH="qa_inaxa_groundtruth_version08-05-2024_1.xlsx"
-    curl -F chat_id=$CHAT_ID -F document=@"$DOCUMENT_PATH" https://api.telegram.org/bot$BOT_TOKEN/sendDocument
-  displayName: 'Send Excel to Telegram'
 
 - task: PublishPipelineArtifact@1
   inputs:
@@ -32,3 +29,14 @@ steps:
     artifactName: 'kpi-results'
     publishLocation: 'pipeline'
   displayName: 'Publish Excel Artifact'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure subscription 1'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      FILE_PATH='qa_inaxa_groundtruth_version08-05-2024_1.xlsx'
+      TELEGRAM_API_URL="https://api.telegram.org/bot$(BOT_TOKEN)/sendDocument"
+      curl -F document=@"$FILE_PATH" -F chat_id=$(CHAT_ID) $TELEGRAM_API_URL
+  displayName: 'Send Excel to Telegram'
