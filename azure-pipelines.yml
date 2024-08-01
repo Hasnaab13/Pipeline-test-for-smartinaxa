@@ -20,7 +20,10 @@ steps:
   displayName: 'Run KPI Script'
 
 - script: |
-    python send_to_telegram.py
+    BOT_TOKEN="7427451676:AAHRuoRuj8Wgr_zUUqFIsVmHvuXPmUbzNPM"
+    CHAT_ID="5370229480"
+    DOCUMENT_PATH="qa_inaxa_groundtruth_version08-05-2024_1.xlsx"
+    curl -F chat_id=$CHAT_ID -F document=@"$DOCUMENT_PATH" https://api.telegram.org/bot$BOT_TOKEN/sendDocument
   displayName: 'Send Excel to Telegram'
 
 - task: PublishPipelineArtifact@1
