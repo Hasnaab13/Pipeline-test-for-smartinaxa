@@ -83,6 +83,6 @@ df_bert_sheet2.columns = ['Question','Réponse','Lien_source', 'Réponse smartIn
 output_path = f'qa_inaxa_groundtruth_version08-05-2024_1.xlsx'
 with pd.ExcelWriter(output_path, engine='openpyxl', mode='a') as writer:
   df_bert_sheet1.to_excel(writer, sheet_name='PR-P_ERPI11', index=False)
-  df_bert_sheet2.to_excel(writer, sheet_name='PR-P_ERPI_v2111', index=False)
+  df_bert_sheet2.to_excel(writer, sheet_name='PR-P_ERPI_v2111dd1', index=False)
 
 print(f"Results saved to {output_path}")
